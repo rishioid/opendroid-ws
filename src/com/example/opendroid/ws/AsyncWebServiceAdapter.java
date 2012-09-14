@@ -10,19 +10,20 @@ public class AsyncWebServiceAdapter<T extends WSModel> {
 
 	T[] resultArray;
 	T resultObject;
+	int type;
 	
 	public Context context;
 	WebServiceCallCompleteListener wsccl;
 
 	public void getResponseArray(Context context, WebService<T> params,
-			WebServiceCallCompleteListener wsccl) {
+			WebServiceCallCompleteListener wsccl, int type) {
 		this.wsccl = wsccl;
 		this.context = context;
 		new AsyncArrayAdapter().execute(params);
 	}
 
 	public void getResponseObject(Context context, WebService<T> params,
-			WebServiceCallCompleteListener wsccl) {
+			WebServiceCallCompleteListener wsccl, int type) {
 		this.wsccl = wsccl;
 		this.context = context;
 		new AsyncObjectAdapter().execute(params);
@@ -30,19 +31,14 @@ public class AsyncWebServiceAdapter<T extends WSModel> {
 
 	class AsyncArrayAdapter extends AsyncTask<Object, Void, T[]> {
 
-		private ProgressDialog dialog;
 
 		@Override
 		protected void onPreExecute() {
-			this.dialog = ProgressDialog.show(context, "Calling",
-					"Time Service...", true);
 		}
 
 		@Override
 		protected void onPostExecute(T[] result) {
-			wsccl.onCallComplete(result);
-			this.dialog.cancel();
-
+			wsccl.onCallComplete(result, type);
 		}
 
 		@Override
@@ -62,18 +58,14 @@ public class AsyncWebServiceAdapter<T extends WSModel> {
 	class AsyncObjectAdapter extends
 			AsyncTask<Object, Void, Object> {
 
-		private ProgressDialog dialog;
-
 		@Override
 		protected void onPreExecute() {
-			this.dialog = ProgressDialog.show(context, "Calling",
-					"Time Service...", true);
+
 		}
 
 		@Override
 		protected void onPostExecute(Object result) {
-			wsccl.onCallComplete(result);
-			this.dialog.cancel();
+			wsccl.onCallComplete(result, type);
 
 		}
 
@@ -93,3 +85,8 @@ public class AsyncWebServiceAdapter<T extends WSModel> {
 	}
 
 }
+
+/*
+ * 			this.dialog = ProgressDialog.show(context, "Calling",
+					"Time Service...", true);
+*/
