@@ -40,10 +40,13 @@ import com.google.gson.Gson;
  *            the generic type
  */
 public abstract class WebService<T extends WSModel> {
-	
+
 	private ProgressDialog dialog;
 	protected Context context;
-	
+
+	private boolean auth;
+	private boolean debug;
+
 	final static String TAG = "WebService";
 
 	/** The Constant TYPE_POST. */
@@ -117,14 +120,18 @@ public abstract class WebService<T extends WSModel> {
 	public T[] getResponseArray() {
 		T[] response = null;
 		InputStream source = fetchStream(getURL());
-		
-		/* InputStream src2 = fetchStream(getURL()); String myString; try {
-		  myString = readInputStreamAsString(src2); Log.d(getClass(),
-		  "RESULT : " + myString); } catch (IOException e) {
-			  e.printStackTrace(); 
-			  
-		  }*/
-		
+
+		if (isDebug()) {
+			InputStream src2 = fetchStream(getURL());
+			String myString;
+			try {
+				myString = readInputStreamAsString(src2);
+				Log.d(TAG, "DEBUG : " + myString);
+			} catch (IOException e) {
+				e.printStackTrace();
+
+			}
+		}
 
 		if (source != null) {
 			Gson gson = new Gson();
@@ -145,13 +152,16 @@ public abstract class WebService<T extends WSModel> {
 	public T getResponseObject() {
 		T response = null;
 		InputStream source = fetchStream(getURL());
-//		try {
-//			String myString = readInputStreamAsString(source);
-//			Log.d(getClass(), "RESULT : " + myString);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		if (isDebug()) {
+			try {
+				InputStream source2 = fetchStream(getURL());
+				String myString = readInputStreamAsString(source2);
+				Log.d(TAG, "DEBUG : " + myString);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		if (source != null) {
 			Gson gson = new Gson();
 			Reader reader = new InputStreamReader(source);
@@ -173,10 +183,6 @@ public abstract class WebService<T extends WSModel> {
 	 */
 	private InputStream fetchStream(String url) {
 
-		// String authentication = "admin:1234";
-		// String encoding = Base64.encodeToString(authentication.getBytes(),
-		// Base64.NO_WRAP);
-
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
 		if (params != null) {
@@ -188,11 +194,13 @@ public abstract class WebService<T extends WSModel> {
 
 		DefaultHttpClient client = new DefaultHttpClient();
 
-		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-				"admin" + ":" + "1234");
-		client.getCredentialsProvider().setCredentials(
-				new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
-				credentials);
+		if (isAuth()) {
+			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
+					"admin" + ":" + "1234");
+			client.getCredentialsProvider().setCredentials(
+					new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
+					credentials);
+		}
 
 		// HttpUriRequest request = null;
 		if (type == TYPE_GET) {
@@ -225,8 +233,7 @@ public abstract class WebService<T extends WSModel> {
 			DefaultHttpClient client) {
 		try {
 
-			Log.d(TAG,
-					("executing request " + request.getRequestLine()));
+			Log.d(TAG, ("executing request " + request.getRequestLine()));
 			HttpResponse getResponse = client.execute(request);
 			final int statusCode = getResponse.getStatusLine().getStatusCode();
 			if (statusCode != HttpStatus.SC_OK) {
@@ -277,6 +284,20 @@ public abstract class WebService<T extends WSModel> {
 		return buf.toString();
 	}
 
+	public boolean isAuth() {
+		return auth;
+	}
 
+	public void needsAuth(boolean auth) {
+		this.auth = auth;
+	}
+
+	public boolean isDebug() {
+		return debug;
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
 
 }
