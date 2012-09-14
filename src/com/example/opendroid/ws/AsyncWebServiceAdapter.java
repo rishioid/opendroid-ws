@@ -11,21 +11,18 @@ public class AsyncWebServiceAdapter<T extends WSModel> {
 	T[] resultArray;
 	T resultObject;
 	int type;
-	
-	public Context context;
+
 	WebServiceCallCompleteListener wsccl;
 
-	public void getResponseArray(Context context, WebService<T> params,
+	public void getResponseArray(WebService<T> params,
 			WebServiceCallCompleteListener wsccl, int type) {
 		this.wsccl = wsccl;
-		this.context = context;
 		new AsyncArrayAdapter().execute(params);
 	}
 
-	public void getResponseObject(Context context, WebService<T> params,
+	public void getResponseObject(WebService<T> params,
 			WebServiceCallCompleteListener wsccl, int type) {
 		this.wsccl = wsccl;
-		this.context = context;
 		new AsyncObjectAdapter().execute(params);
 	}
 
