@@ -1,4 +1,6 @@
-package com.example.opendroid.ws;
+package com.opendroid.ws;
+
+import com.example.opendroid.ws.R;
 
 import android.os.Bundle;
 import android.app.Activity;

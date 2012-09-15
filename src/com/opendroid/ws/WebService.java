@@ -1,4 +1,4 @@
-package com.example.opendroid.ws;
+package com.opendroid.ws;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,8 +30,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.opendroid.ws.models.WSModel;
 import com.google.gson.Gson;
+import com.opendroid.ws.models.WSModel;
 
 /**
  * The Class WebService.

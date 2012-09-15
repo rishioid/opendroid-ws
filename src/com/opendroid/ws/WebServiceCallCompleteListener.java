@@ -1,4 +1,4 @@
-package com.example.opendroid.ws;
+package com.opendroid.ws;
 
 public interface WebServiceCallCompleteListener {
 	
