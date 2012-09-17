@@ -46,6 +46,8 @@ public abstract class WebService<T extends WSModel> {
 
 	private boolean auth;
 	private boolean debug;
+	private boolean cleanUrl;
+	
 
 	final static String TAG = "WebService";
 
@@ -186,6 +188,18 @@ public abstract class WebService<T extends WSModel> {
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
 		if (params != null) {
+			
+			String paramSeperator = "?";
+			
+			if(cleanUrl)
+			{
+				paramSeperator = "/";
+			}
+			else
+			{
+				paramSeperator = "?";
+			}
+			
 			for (String key : params.keySet()) {
 				nameValuePairs.add(new BasicNameValuePair(key, params.get(key)
 						+ ""));
@@ -207,7 +221,7 @@ public abstract class WebService<T extends WSModel> {
 			Log.d(TAG, "IN GET");
 			String paramString = URLEncodedUtils.format(nameValuePairs,
 					HTTP.UTF_8);
-			url += paramString;
+			url += "?" + paramString;
 			HttpGet request = new HttpGet(url);
 
 			return fetchResponse(request, client);
@@ -298,6 +312,14 @@ public abstract class WebService<T extends WSModel> {
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
+	}
+
+	public boolean isCleanUrl() {
+		return cleanUrl;
+	}
+
+	public void setCleanUrl(boolean cleanUrl) {
+		this.cleanUrl = cleanUrl;
 	}
 
 }
