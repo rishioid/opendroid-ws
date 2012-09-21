@@ -1,7 +1,5 @@
 package com.opendroid.ws;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
 
 import com.opendroid.ws.models.WSModel;
@@ -10,7 +8,7 @@ public class AsyncWebServiceAdapter<T extends WSModel> {
 
 	T[] resultArray;
 	T resultObject;
-	int type;
+	int type = -1;
 
 	WebServiceCallCompleteListener wsccl;
 
@@ -18,12 +16,14 @@ public class AsyncWebServiceAdapter<T extends WSModel> {
 			WebServiceCallCompleteListener wsccl, int type) {
 		this.wsccl = wsccl;
 		new AsyncArrayAdapter().execute(params);
+		this.type  =  type;
 	}
 
 	public void getResponseObject(WebService<T> params,
 			WebServiceCallCompleteListener wsccl, int type) {
 		this.wsccl = wsccl;
 		new AsyncObjectAdapter().execute(params);
+		this.type  =  type;
 	}
 
 	class AsyncArrayAdapter extends AsyncTask<Object, Void, T[]> {
