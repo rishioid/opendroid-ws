@@ -31,6 +31,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.opendroid.ws.models.WSModel;
 
 /**
@@ -47,7 +48,6 @@ public abstract class WebService<T extends WSModel> {
 	private boolean auth;
 	private boolean debug;
 	private boolean cleanUrl;
-	
 
 	final static String TAG = "WebService";
 
@@ -72,6 +72,18 @@ public abstract class WebService<T extends WSModel> {
 	 * @return the url
 	 */
 	protected abstract String getURL();
+	
+	/**
+	 * @author Rishi K Instantiates a new web service for request method type
+	 *         (TYPE_GET or TYPE_POST).
+	 * @param params
+	 *            parameters that need to be passed in request
+	 * @param type
+	 *            WebService.TYPE_GET or WebService.TYPE_POST
+	 */
+	public WebService() {
+	}
+
 
 	/**
 	 * @author Rishi K Instantiates a new web service for request method type
@@ -81,7 +93,7 @@ public abstract class WebService<T extends WSModel> {
 	 * @param type
 	 *            WebService.TYPE_GET or WebService.TYPE_POST
 	 */
-	protected WebService(Map<String, String> params, int type) {
+	public WebService(Map<String, String> params, int type) {
 		this.type = type;
 		this.params = params;
 	}
@@ -91,7 +103,7 @@ public abstract class WebService<T extends WSModel> {
 	 * @param params
 	 *            parameters that need to be passed in request
 	 */
-	protected WebService(Map<String, String> params) {
+	public WebService(Map<String, String> params) {
 		type = TYPE_GET;
 		this.params = params;
 	}
@@ -102,7 +114,7 @@ public abstract class WebService<T extends WSModel> {
 	 * @param type
 	 *            WebService.TYPE_GET or WebService.TYPE_POST
 	 */
-	protected WebService(int type) {
+	public WebService(int type) {
 		this.type = type;
 	}
 
@@ -139,7 +151,18 @@ public abstract class WebService<T extends WSModel> {
 			Gson gson = new Gson();
 			Reader reader = new InputStreamReader(source);
 
-			response = (T[]) gson.fromJson(reader, getMapperClass());
+			try {
+				response = (T[]) gson.fromJson(reader, getMapperClass());
+			} catch (JsonSyntaxException jse) {
+				response = null;
+				
+				Log.e(TAG, "JSE : "+jse.getMessage());
+				Log.e(TAG, "CAUSE : "+jse.getCause());
+				Log.e(TAG, "CLASS : "+jse.getClass());
+				
+//				if(jse.getMessage().contains(cs))
+				
+			}
 
 			Log.d("TAG", "Response:  " + response);
 		}
@@ -188,18 +211,15 @@ public abstract class WebService<T extends WSModel> {
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
 		if (params != null) {
-			
+
 			String paramSeperator = "?";
-			
-			if(cleanUrl)
-			{
+
+			if (cleanUrl) {
 				paramSeperator = "/";
-			}
-			else
-			{
+			} else {
 				paramSeperator = "?";
 			}
-			
+
 			for (String key : params.keySet()) {
 				nameValuePairs.add(new BasicNameValuePair(key, params.get(key)
 						+ ""));
@@ -278,7 +298,7 @@ public abstract class WebService<T extends WSModel> {
 	 * Sets the access token needed.
 	 * 
 	 * @param accessTokenNeeded
-	 *            the new access token needed
+	 *            the new access token modelneeded
 	 */
 	public void setAccessTokenNeeded(boolean accessTokenNeeded) {
 		this.accessTokenNeeded = accessTokenNeeded;
