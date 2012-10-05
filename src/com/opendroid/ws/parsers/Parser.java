@@ -1,8 +1,8 @@
 package com.opendroid.ws.parsers;
 
-import com.opendroid.ws.models.WSModel;
+import com.opendroid.ws.models.WsModel;
 
-public interface Parser<T extends WSModel> {
+public interface Parser<T extends WsModel> {
 	
 	public T getResponseObject();
 	public T[] getResponseArray();

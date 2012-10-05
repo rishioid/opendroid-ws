@@ -1,8 +1,8 @@
 package com.opendroid.ws.parsers;
 
-import com.opendroid.ws.models.WSModel;
+import com.opendroid.ws.models.WsModel;
 
-public class JsonParser<T extends WSModel> implements Parser<T> {
+public class JsonParser<T extends WsModel> implements Parser<T> {
 
 	@Override
 	public T getResponseObject() {

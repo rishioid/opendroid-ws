@@ -2,9 +2,9 @@ package com.opendroid.ws;
 
 import android.os.AsyncTask;
 
-import com.opendroid.ws.models.WSModel;
+import com.opendroid.ws.models.WsModel;
 
-public class AsyncWebServiceAdapter<T extends WSModel> {
+public class AsyncWebServiceAdapter<T extends WsModel> {
 
 	T[] resultArray;
 	T resultObject;
@@ -12,14 +12,14 @@ public class AsyncWebServiceAdapter<T extends WSModel> {
 
 	WebServiceCallCompleteListener wsccl;
 
-	public void getResponseArray(WebService<T> params,
+	public void getResponseArray(IWebService<T> params,
 			WebServiceCallCompleteListener wsccl, int type) {
 		this.wsccl = wsccl;
 		new AsyncArrayAdapter().execute(params);
 		this.type  =  type;
 	}
 
-	public void getResponseObject(WebService<T> params,
+	public void getResponseObject(IWebService<T> params,
 			WebServiceCallCompleteListener wsccl, int type) {
 		this.wsccl = wsccl;
 		new AsyncObjectAdapter().execute(params);
@@ -40,7 +40,7 @@ public class AsyncWebServiceAdapter<T extends WSModel> {
 
 		@Override
 		protected T[] doInBackground(Object... params) {
-			WebService<T> ws = (WebService<T>) params[0];
+			IWebService<T> ws = (IWebService<T>) params[0];
 			resultArray = (T[]) ws.getResponseArray();
 			if (resultArray != null) {
 				return resultArray;
@@ -68,7 +68,7 @@ public class AsyncWebServiceAdapter<T extends WSModel> {
 
 		@Override
 		protected Object doInBackground(Object... params) {
-			WebService<T> ws = (WebService<T>) params[0];
+			IWebService<T> ws = (IWebService<T>) params[0];
 			resultObject = (T) ws.getResponseObject();
 			if (resultObject != null) {
 				

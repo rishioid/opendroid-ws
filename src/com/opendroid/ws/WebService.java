@@ -1,3 +1,7 @@
+/*
+ * @author Rishi Kolvekar
+ * 
+ */
 package com.opendroid.ws;
 
 import java.io.BufferedInputStream;
@@ -32,23 +36,36 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.opendroid.ws.models.WSModel;
+import com.opendroid.ws.models.WsModel;
 
+// TODO: Auto-generated Javadoc
 /**
- * The Class WebService.
+ * The Class WebService. used for basic webservices parsing
  * 
  * @param <T>
  *            the generic type
  */
-public abstract class WebService<T extends WSModel> {
+public abstract class WebService<T extends WsModel> implements IWebService {
 
+	/** The dialog. */
 	private ProgressDialog dialog;
+
+	/** The context. */
 	protected Context context;
 
+	/** The auth. */
 	private boolean auth;
+
+	/** The debug. */
 	private boolean debug;
+
+	/** The clean url. */
 	private boolean cleanUrl;
 
+	/** The password. */
+	private String username, password;
+
+	/** The Constant TAG. */
 	final static String TAG = "WebService";
 
 	/** The Constant TYPE_POST. */
@@ -63,31 +80,24 @@ public abstract class WebService<T extends WSModel> {
 	/** The access token needed. */
 	private boolean accessTokenNeeded;
 
-	/** The accesstoken. */
-	private String accesstoken;
-
 	/**
-	 * Gets the url.
+	 * Gets the url of webservices.
 	 * 
 	 * @return the url
 	 */
 	protected abstract String getURL();
-	
+
 	/**
-	 * @author Rishi K Instantiates a new web service for request method type
-	 *         (TYPE_GET or TYPE_POST).
-	 * @param params
-	 *            parameters that need to be passed in request
-	 * @param type
-	 *            WebService.TYPE_GET or WebService.TYPE_POST
+	 * Instantiates a new web service for request method type (TYPE_GET).
 	 */
 	public WebService() {
+		this.type = TYPE_GET;
 	}
 
-
 	/**
-	 * @author Rishi K Instantiates a new web service for request method type
-	 *         (TYPE_GET or TYPE_POST).
+	 * Instantiates a new web service for request method type (TYPE_GET or
+	 * TYPE_POST).
+	 * 
 	 * @param params
 	 *            parameters that need to be passed in request
 	 * @param type
@@ -99,7 +109,8 @@ public abstract class WebService<T extends WSModel> {
 	}
 
 	/**
-	 * @author Rishi K Instantiates a new web service and defaults to GET type.
+	 * Instantiates a new web service and defaults to GET type.
+	 * 
 	 * @param params
 	 *            parameters that need to be passed in request
 	 */
@@ -119,16 +130,18 @@ public abstract class WebService<T extends WSModel> {
 	}
 
 	/**
-	 * @author Rishi K Gets the mapper class.
+	 * Gets the mapper class.
 	 * 
 	 * @return the mapper class
+	 * @author Gets the mapper class for web service response.
 	 */
 	protected abstract Class<?> getMapperClass();
 
 	/**
-	 * @author Rishi K Gets the response in form of array of mapping class.
+	 * Gets the response array.
 	 * 
 	 * @return the response array
+	 * @author Gets the response in form of array of mapping class.
 	 */
 	@SuppressWarnings("unchecked")
 	public T[] getResponseArray() {
@@ -155,13 +168,13 @@ public abstract class WebService<T extends WSModel> {
 				response = (T[]) gson.fromJson(reader, getMapperClass());
 			} catch (JsonSyntaxException jse) {
 				response = null;
-				
-				Log.e(TAG, "JSE : "+jse.getMessage());
-				Log.e(TAG, "CAUSE : "+jse.getCause());
-				Log.e(TAG, "CLASS : "+jse.getClass());
-				
-//				if(jse.getMessage().contains(cs))
-				
+
+				Log.e(TAG, "JSE : " + jse.getMessage());
+				Log.e(TAG, "CAUSE : " + jse.getCause());
+				Log.e(TAG, "CLASS : " + jse.getClass());
+
+				// if(jse.getMessage().contains(cs))
+
 			}
 
 			Log.d("TAG", "Response:  " + response);
@@ -170,9 +183,10 @@ public abstract class WebService<T extends WSModel> {
 	} // end callWebService()
 
 	/**
-	 * @author Rishi K Gets the response in form of object of mapping class.
+	 * Gets the response object.
 	 * 
 	 * @return the response object
+	 * @author Gets the response in form of object of mapping class.
 	 */
 	public T getResponseObject() {
 		T response = null;
@@ -200,11 +214,12 @@ public abstract class WebService<T extends WSModel> {
 	} // end callWebService()
 
 	/**
-	 * @author Rishi K Fetch stream.
+	 * Fetch stream.
 	 * 
 	 * @param url
 	 *            the url
 	 * @return the input stream
+	 * @author Fetch stream.
 	 */
 	private InputStream fetchStream(String url) {
 
@@ -263,6 +278,15 @@ public abstract class WebService<T extends WSModel> {
 
 	}
 
+	/**
+	 * Fetch response.
+	 * 
+	 * @param request
+	 *            the request
+	 * @param client
+	 *            the client
+	 * @return the input stream
+	 */
 	private InputStream fetchResponse(HttpUriRequest request,
 			DefaultHttpClient client) {
 		try {
@@ -286,25 +310,15 @@ public abstract class WebService<T extends WSModel> {
 	}
 
 	/**
-	 * Checks if is access token needed.
+	 * Read input stream as string.
 	 * 
-	 * @return true, if is access token needed
+	 * @param in
+	 *            the in
+	 * @return the string
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
-	public boolean isAccessTokenNeeded() {
-		return accessTokenNeeded;
-	}
-
-	/**
-	 * Sets the access token needed.
-	 * 
-	 * @param accessTokenNeeded
-	 *            the new access token modelneeded
-	 */
-	public void setAccessTokenNeeded(boolean accessTokenNeeded) {
-		this.accessTokenNeeded = accessTokenNeeded;
-	}
-
-	public static String readInputStreamAsString(InputStream in)
+	private static String readInputStreamAsString(InputStream in)
 			throws IOException {
 
 		BufferedInputStream bis = new BufferedInputStream(in);
@@ -318,26 +332,81 @@ public abstract class WebService<T extends WSModel> {
 		return buf.toString();
 	}
 
+	/**
+	 * Checks if is auth.
+	 * 
+	 * @return true, if is auth
+	 */
 	public boolean isAuth() {
 		return auth;
 	}
 
+	/**
+	 * Sets browser level authentication enabled.
+	 * 
+	 * @param auth
+	 *            set true if your service needs browser level authentication
+	 */
 	public void needsAuth(boolean auth) {
 		this.auth = auth;
 	}
 
+	/**
+	 * Sets browser level authentication credentials.
+	 * 
+	 * @param username
+	 *            the username
+	 * @param password
+	 *            the password
+	 */
+	public void setAuthCredentials(String username, String password) {
+		this.username = username;
+		this.password = password;
+	}
+
+	/**
+	 * if set to true, then application will print web service output in logcat
+	 * as tag "DEBUG" WARNING : do not use this method while some service that
+	 * inserts some data on the server, else data will be inserted twice.
+	 * WARNING : this method slows down your request, so remove/comment once its
+	 * usage is done, use this method for debugging purpose only.
+	 * 
+	 * @return true, if is debug
+	 */
 	public boolean isDebug() {
 		return debug;
 	}
 
+	/**
+	 * Sets the debug, . if set to true, then application will print web service
+	 * output in logcat as tag "DEBUG" WARNING : do not use this method while
+	 * some service that inserts some data on the server, else data will be
+	 * inserted twice. WARNING : this method slows down your request, so
+	 * remove/comment once its usage is done, use this method for debugging
+	 * purpose only.
+	 * 
+	 * @param debug
+	 *            the new debug
+	 */
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
 
+	/**
+	 * Checks if is clean url example : http://sme.site.com/hello/world.
+	 * 
+	 * @return true, if is clean url
+	 */
 	public boolean isCleanUrl() {
 		return cleanUrl;
 	}
 
+	/**
+	 * Sets the clean url. example : http://sme.site.com/hello/world..
+	 * 
+	 * @param cleanUrl
+	 *            the new clean url
+	 */
 	public void setCleanUrl(boolean cleanUrl) {
 		this.cleanUrl = cleanUrl;
 	}

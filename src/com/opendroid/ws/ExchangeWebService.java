@@ -16,6 +16,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
@@ -30,17 +31,17 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.opendroid.ws.models.WSModel;
+import com.opendroid.ws.models.WsModel;
 
-public abstract class ExchangeWebService<T extends WSModel> {
+public abstract class ExchangeWebService<T extends WsModel> {
 
-	WSModel model = null;
+	WsModel model = null;
 
 	public ExchangeWebService() {
 		super();
 	}
 
-	public ExchangeWebService(WSModel model) {
+	public ExchangeWebService(WsModel model) {
 		this.model = model;
 	}
 
@@ -197,15 +198,15 @@ public abstract class ExchangeWebService<T extends WSModel> {
 		if (type == TYPE_GET) {
 			
 //			throw new MethodNotSupportedException("GET 	method is not yet suported");
-			Log.e(TAG, "GET not yet supported");
-			/*try {
+//			Log.e(TAG, "GET not yet supported");
+			try {
 				HttpGet get = new HttpGet(url);
 
-				StringEntity se = new StringEntity("");
-				se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE,
-						"application/json"));
-				get.setEntity(se);
-				HttpResponse response = client.execute(post);
+//				StringEntity se = new StringEntity("");
+//				se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE,
+//						"application/json"));
+//				get.setEntity(se);
+				HttpResponse response = client.execute(get);
 				if (response != null) {
 					InputStream in = response.getEntity().getContent();
 					return in;
@@ -215,7 +216,7 @@ public abstract class ExchangeWebService<T extends WSModel> {
 				}
 			} catch (Exception e) {
 				Log.e(TAG, e.toString());
-			}*/
+			}
 		} else {
 
 			try {
