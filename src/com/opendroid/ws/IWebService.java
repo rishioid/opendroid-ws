@@ -4,6 +4,8 @@
  */
 package com.opendroid.ws;
 
+import java.io.IOException;
+
 import com.opendroid.ws.models.WsModel;
 
 /**
@@ -27,5 +29,12 @@ public interface IWebService<T extends WsModel> {
 	 * @return the response array
 	 */
 	public Object[] getResponseArray();
+	
+	/**
+	 * Gets the response as plain  String, useful for services that return plain text.
+	 *
+	 * @return the response in string format
+	 */
+	public String getResponseString() throws IOException;
 	
 }

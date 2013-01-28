@@ -214,6 +214,23 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	} // end callWebService()
 
 	/**
+	 * Gets the response in String format. Use this method when you want to
+	 * fetch String data deom webservice
+	 * 
+	 * @return the response object
+	 * @author Gets the response in form of object of mapping class.
+	 * @throws IOException
+	 */
+	public String getResponseString() throws IOException {
+		InputStream source = fetchStream(getURL());
+		String responseString = readInputStreamAsString(source);
+		if (isDebug()) {
+			Log.d(TAG, responseString);
+		}
+		return responseString;
+	}
+
+	/**
 	 * Fetch stream.
 	 * 
 	 * @param url
@@ -245,7 +262,7 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 
 		if (isAuth()) {
 			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-					"admin" + ":" + "1234");
+					this.username + ":" + this.password);
 			client.getCredentialsProvider().setCredentials(
 					new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
 					credentials);

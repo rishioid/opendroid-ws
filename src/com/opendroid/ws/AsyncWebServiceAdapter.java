@@ -1,6 +1,9 @@
 package com.opendroid.ws;
 
+import java.io.IOException;
+
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.opendroid.ws.models.WsModel;
 
@@ -16,18 +19,24 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 			WebServiceCallCompleteListener wsccl, int type) {
 		this.wsccl = wsccl;
 		new AsyncArrayAdapter().execute(params);
-		this.type  =  type;
+		this.type = type;
 	}
 
 	public void getResponseObject(IWebService<T> params,
 			WebServiceCallCompleteListener wsccl, int type) {
 		this.wsccl = wsccl;
 		new AsyncObjectAdapter().execute(params);
-		this.type  =  type;
+		this.type = type;
+	}
+	
+	public void getResponseString(IWebService<T> params,
+			WebServiceCallCompleteListener wsccl, int type) {
+		this.wsccl = wsccl;
+		new AsyncPlainStringAdapter().execute(params);
+		this.type = type;
 	}
 
 	class AsyncArrayAdapter extends AsyncTask<Object, Void, T[]> {
-
 
 		@Override
 		protected void onPreExecute() {
@@ -52,8 +61,7 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 
 	}
 
-	class AsyncObjectAdapter extends
-			AsyncTask<Object, Void, Object> {
+	class AsyncObjectAdapter extends AsyncTask<Object, Void, Object> {
 
 		@Override
 		protected void onPreExecute() {
@@ -71,8 +79,43 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 			IWebService<T> ws = (IWebService<T>) params[0];
 			resultObject = (T) ws.getResponseObject();
 			if (resultObject != null) {
-				
+
 				return resultObject;
+			} else {
+				return null;
+			}
+
+		}
+
+	}
+
+	class AsyncPlainStringAdapter extends AsyncTask<Object, Void, String> {
+
+		private static final String TAG = "AsyncPlainStringAdapter";
+
+		@Override
+		protected void onPreExecute() {
+
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			wsccl.onCallComplete(result, type);
+
+		}
+
+		@Override
+		protected String doInBackground(Object... params) {
+			IWebService<T> ws = (IWebService<T>) params[0];
+			String resultString=null;
+			try {
+				resultString = ws.getResponseString();
+			} catch (IOException e) {
+				Log.e(TAG, e.getMessage());
+			}
+			if (resultString != null) {
+
+				return resultString;
 			} else {
 				return null;
 			}
@@ -84,6 +127,6 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 }
 
 /*
- * 			this.dialog = ProgressDialog.show(context, "Calling",
-					"Time Service...", true);
-*/
+ * this.dialog = ProgressDialog.show(context, "Calling", "Time Service...",
+ * true);
+ */
