@@ -21,14 +21,14 @@ public interface IWebService<T extends WsModel> {
 	 *
 	 * @return the response object
 	 */
-	public Object getResponseObject();
+	public Object getResponseObject() throws IOException;
 	
 	/**
 	 * Gets the response array, useful for services that return array of objects.
 	 *
 	 * @return the response array
 	 */
-	public Object[] getResponseArray();
+	public Object[] getResponseArray() throws IOException;
 	
 	/**
 	 * Gets the response as plain  String, useful for services that return plain text.

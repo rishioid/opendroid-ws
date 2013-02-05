@@ -70,6 +70,7 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 
 	/** The Constant TYPE_POST. */
 	public final static int TYPE_GET = 0, TYPE_POST = 1;
+	
 
 	/** The type. */
 	int type = 0;
@@ -142,22 +143,20 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	 * 
 	 * @return the response array
 	 * @author Gets the response in form of array of mapping class.
+	 * @throws IOException 
 	 */
 	@SuppressWarnings("unchecked")
-	public T[] getResponseArray() {
+	public T[] getResponseArray() throws IOException {
 		T[] response = null;
 		InputStream source = fetchStream(getURL());
 
 		if (isDebug()) {
 			InputStream src2 = fetchStream(getURL());
 			String myString;
-			try {
-				myString = readInputStreamAsString(src2);
-				Log.d(TAG, "DEBUG : " + myString);
-			} catch (IOException e) {
-				e.printStackTrace();
 
-			}
+			myString = readInputStreamAsString(src2);
+			Log.d(TAG, "DEBUG : " + myString);
+
 		}
 
 		if (source != null) {
@@ -187,19 +186,17 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	 * 
 	 * @return the response object
 	 * @author Gets the response in form of object of mapping class.
+	 * @throws IOException
 	 */
-	public T getResponseObject() {
+	public T getResponseObject() throws IOException {
 		T response = null;
 		InputStream source = fetchStream(getURL());
 		if (isDebug()) {
-			try {
-				InputStream source2 = fetchStream(getURL());
-				String myString = readInputStreamAsString(source2);
-				Log.d(TAG, "DEBUG : " + myString);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+			InputStream source2 = fetchStream(getURL());
+			String myString = readInputStreamAsString(source2);
+			Log.d(TAG, "DEBUG : " + myString);
+
 		}
 		if (source != null) {
 			Gson gson = new Gson();
