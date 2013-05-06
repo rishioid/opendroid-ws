@@ -29,7 +29,9 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 
 	/** The wsccl. */
 	WebServiceCallCompleteListener wsccl;
-
+	
+	AsyncTask taskInBackground=null;
+	
 	/**
 	 * Gets the response array.
 	 *
@@ -56,7 +58,8 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 	public void getResponseObject(IWebService<T> params,
 			WebServiceCallCompleteListener wsccl, int type) {
 		this.wsccl = wsccl;
-		new AsyncObjectAdapter().execute(params);
+		taskInBackground = new AsyncObjectAdapter();
+		taskInBackground.execute(params);
 		this.type = type;
 	}
 
@@ -71,7 +74,8 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 	public void getResponseString(IWebService<T> params,
 			WebServiceCallCompleteListener wsccl, int type) {
 		this.wsccl = wsccl;
-		new AsyncPlainStringAdapter().execute(params);
+		taskInBackground = new AsyncPlainStringAdapter();
+		taskInBackground.execute(params);
 		this.type = type;
 	}
 
@@ -101,18 +105,23 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 		@Override
 		protected T[] doInBackground(Object... params) {
 			IWebService<T> ws = (IWebService<T>) params[0];
-			try {
-				resultArray = (T[]) ws.getResponseArray();
-			} catch (IOException e) {
-				exception = e;
-				e.printStackTrace();
-			}
-			if (resultArray != null) {
-				return resultArray;
-			} else {
-				return null;
-			}
-
+			
+			if(isCancelled()){
+				
+				try {
+					resultArray = (T[]) ws.getResponseArray();
+				} catch (IOException e) {
+					exception = e;
+					e.printStackTrace();
+				}
+				if (resultArray != null) {
+					return resultArray;
+				} else {
+					return null;
+				}
+				
+			} 
+			return null;
 		}
 
 	}
@@ -145,18 +154,24 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 		@Override
 		protected Object doInBackground(Object... params) {
 			IWebService<T> ws = (IWebService<T>) params[0];
-			try {
-				resultObject = (T) ws.getResponseObject();
-			} catch (IOException e) {
-				exception = e;
-				e.printStackTrace();
-			}
-			if (resultObject != null) {
+			
+			if(!isCancelled()){
+				
+				try {
+					resultObject = (T) ws.getResponseObject();
+				} catch (IOException e) { 
+					exception = e;
+					e.printStackTrace();
+					
+				}
+				if (resultObject != null) {
 
-				return resultObject;
-			} else {
-				return null;
-			}
+					return resultObject;
+				} else {
+					return null;
+				}
+			}			
+			return null;
 
 		}
 
@@ -196,26 +211,33 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 			IWebService<T> ws = (IWebService<T>) params[0];
 			String resultString = null;
 
-			try {
-				resultString = ws.getResponseString();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				exception = e;
-				e.printStackTrace();
+			if(!isCancelled()){
+				
+				try {
+					resultString = ws.getResponseString();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					exception = e;
+					e.printStackTrace();
+				}
+
+				if (resultString != null) {
+
+					return resultString;
+				} else {
+					return null;
+				}
+				
 			}
-
-			if (resultString != null) {
-
-				return resultString;
-			} else {
-				return null;
-			}
-
+			return null;
 		}
 
 	}
 
-}
+	public void cancel(){
+		taskInBackground.cancel(true);
+	}
+} 
 
 /*
  * this.dialog = ProgressDialog.show(context, "Calling", "Time Service...",
