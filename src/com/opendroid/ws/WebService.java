@@ -151,10 +151,8 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 		InputStream source = fetchStream(getURL());
 
 		if (isDebug()) {
-			InputStream src2 = fetchStream(getURL());
-			String myString;
-
-			myString = readInputStreamAsString(src2);
+			
+			String myString = readInputStreamAsString(source);
 			Log.d(TAG, "DEBUG : " + myString);
 
 		}
@@ -192,9 +190,8 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 		T response = null;
 		InputStream source = fetchStream(getURL());
 		if (isDebug()) {
-
-			InputStream source2 = fetchStream(getURL());
-			String myString = readInputStreamAsString(source2);
+			
+			String myString = readInputStreamAsString(source);
 			Log.d(TAG, "DEBUG : " + myString);
 
 		}

@@ -43,8 +43,9 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 	public void getResponseArray(IWebService<T> params,
 			WebServiceCallCompleteListener wsccl, int type) {
 		this.wsccl = wsccl;
-		new AsyncArrayAdapter().execute(params);
 		this.type = type;
+		taskInBackground = new AsyncArrayAdapter();
+		taskInBackground.execute(params);
 	}
 
 	/**
@@ -58,9 +59,10 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 	public void getResponseObject(IWebService<T> params,
 			WebServiceCallCompleteListener wsccl, int type) {
 		this.wsccl = wsccl;
+		this.type = type;
 		taskInBackground = new AsyncObjectAdapter();
 		taskInBackground.execute(params);
-		this.type = type;
+		
 	}
 
 	/**
@@ -95,10 +97,20 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
 		 */
 		@Override
-		protected void onPostExecute(T[] result) {
+		protected void onPostExecute(T[] result) {			
+			Log.d(	"size",
+					"OnPost AsyncArrayAdapter : "
+							+ result + " <> type : " + type + " :wsccl: " + wsccl.getClass()
+																					.getName());
 			wsccl.onCallComplete(result, type);
 		}
-
+		@Override
+		protected void onCancelled() {
+			super.onCancelled();
+			
+			Log.d("size", "OnCancelled AsyncArrayAdapter");			
+			
+		}
 		/* (non-Javadoc)
 		 * @see android.os.AsyncTask#doInBackground(Params[])
 		 */
@@ -106,7 +118,9 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 		protected T[] doInBackground(Object... params) {
 			IWebService<T> ws = (IWebService<T>) params[0];
 			
-			if(isCancelled()){
+			if(!isCancelled()){
+				
+				Log.d("size", "doInBackground AsyncArrayAdapter");
 				
 				try {
 					resultArray = (T[]) ws.getResponseArray();
