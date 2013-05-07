@@ -149,25 +149,21 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	public T[] getResponseArray() throws IOException {
 		T[] response = null;
 		InputStream source = fetchStream(getURL());
-
+		String myString = readInputStreamAsString(source);
+ 
 		if (isDebug()) {
-			
-			String myString = readInputStreamAsString(source);
 			Log.d(TAG, "DEBUG : " + myString);
-
 		}
 
 		if (source != null) {
-			Gson gson = new Gson();
+			Gson gson = new Gson(); 
 			Reader reader = new InputStreamReader(source);
 			
 			Log.d(TAG, "reader : " + reader);
 			
 			try {
 				response = (T[]) gson.fromJson(reader, getMapperClass());
-				
-				Log.d(TAG, "response.length : " + response.length);
-				
+				  
 			} catch (JsonSyntaxException jse) {
 				response = null;
 
@@ -194,18 +190,15 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	public T getResponseObject() throws IOException {
 		T response = null;
 		InputStream source = fetchStream(getURL());
+		String myString = readInputStreamAsString(source);
+		
 		if (isDebug()) {
-			
-			String myString = readInputStreamAsString(source);
-			Log.d(TAG, "DEBUG : " + myString);
+ 			Log.d(TAG, "DEBUG : " + myString);
 
 		}
 		if (source != null) {
 			Gson gson = new Gson();
-			Reader reader = new InputStreamReader(source);
-			response = (T) gson.fromJson(reader, getMapperClass());
-
-			Log.d("TAG", "Response:  " + response.toString());
+			response = (T) gson.fromJson(myString, getMapperClass());
 		} else {
 			Log.e(TAG, "Response found null !!");
 		}
