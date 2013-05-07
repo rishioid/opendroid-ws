@@ -160,9 +160,14 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 		if (source != null) {
 			Gson gson = new Gson();
 			Reader reader = new InputStreamReader(source);
-
+			
+			Log.d(TAG, "reader : " + reader);
+			
 			try {
 				response = (T[]) gson.fromJson(reader, getMapperClass());
+				
+				Log.d(TAG, "response.length : " + response.length);
+				
 			} catch (JsonSyntaxException jse) {
 				response = null;
 
