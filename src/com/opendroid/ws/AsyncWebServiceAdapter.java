@@ -24,6 +24,7 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 	/** The type. */
 	int type = -1;
 	
+	
 	/** The exception. */
 	Exception exception;
 
