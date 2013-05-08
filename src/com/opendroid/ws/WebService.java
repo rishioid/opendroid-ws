@@ -226,7 +226,7 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	 * @return the input stream
 	 * @author Fetch stream.
 	 */
-	private InputStream fetchStream(String url) {
+	protected InputStream fetchStream(String url) {
 
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
@@ -323,7 +323,7 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private static String readInputStreamAsString(InputStream in)
+	protected static String readInputStreamAsString(InputStream in)
 			throws IOException {
 
 		BufferedInputStream bis = new BufferedInputStream(in);
