@@ -70,7 +70,6 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 
 	/** The Constant TYPE_POST. */
 	public final static int TYPE_GET = 0, TYPE_POST = 1;
-	
 
 	/** The type. */
 	int type = 0;
@@ -107,6 +106,7 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	public WebService(Map<String, String> params, int type) {
 		this.type = type;
 		this.params = params;
+		Log.d("opendroid-ws => params", String.valueOf(params));
 	}
 
 	/**
@@ -118,6 +118,7 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	public WebService(Map<String, String> params) {
 		type = TYPE_GET;
 		this.params = params;
+		Log.d("opendroid-ws => params", String.valueOf(params));
 	}
 
 	/**
@@ -143,7 +144,7 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	 * 
 	 * @return the response array
 	 * @author Gets the response in form of array of mapping class.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
 	public T[] getResponseArray() throws IOException {
