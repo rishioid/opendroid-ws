@@ -124,6 +124,7 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	public WebService(Map<String, String> params, int type) {
 		this.type = type;
 		this.params = params;
+		Log.d("opendroid-ws => params", String.valueOf(params));
 	}
 
 	/**
@@ -135,6 +136,7 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	public WebService(Map<String, String> params) {
 		type = TYPE_GET;
 		this.params = params;
+		Log.d("opendroid-ws => params", String.valueOf(params));
 	}
 
 	/**
@@ -166,17 +168,14 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	public T[] getResponseArray() throws IOException {
 		T[] response = null;
 		InputStream source = fetchStream(getURL());
-
+		String myString = readInputStreamAsString(source);
+ 
 		if (isDebug()) {
-			InputStream src2 = fetchStream(getURL());
-			String myString;
-
-			myString = readInputStreamAsString(src2);
 			Log.d(TAG, "DEBUG : " + myString);
-
 		}
 
 		if (source != null) {
+
 			Gson gson = null;
 
 			if (deserializer != null) {
@@ -191,7 +190,8 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 			Reader reader = new InputStreamReader(source);
 
 			try {
-				response = (T[]) gson.fromJson(reader, getMapperClass());
+				response = (T[]) gson.fromJson(myString, getMapperClass());
+				  
 			} catch (JsonSyntaxException jse) {
 				response = null;
 
@@ -218,14 +218,14 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	public T getResponseObject() throws IOException {
 		T response = null;
 		InputStream source = fetchStream(getURL());
+		String myString = readInputStreamAsString(source);
+		
 		if (isDebug()) {
-
-			InputStream source2 = fetchStream(getURL());
-			String myString = readInputStreamAsString(source2);
-			Log.d(TAG, "DEBUG : " + myString);
+ 			Log.d(TAG, "DEBUG : " + myString);
 
 		}
 		if (source != null) {
+
 			Gson gson = null;
 
 			if (deserializer != null) {
@@ -241,6 +241,7 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 			response = (T) gson.fromJson(reader, getMapperClass());
 
 			Log.d("TAG", "Response:  " + response.toString());
+
 		} else {
 			Log.e(TAG, "Response found null !!");
 		}
@@ -272,7 +273,7 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	 * @return the input stream
 	 * @author Fetch stream.
 	 */
-	private InputStream fetchStream(String url) {
+	protected InputStream fetchStream(String url) {
 
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		
@@ -383,7 +384,7 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private static String readInputStreamAsString(InputStream in)
+	protected static String readInputStreamAsString(InputStream in)
 			throws IOException {
 
 		BufferedInputStream bis = new BufferedInputStream(in);
