@@ -6,6 +6,7 @@ package com.opendroid.ws;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,16 +26,21 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSyntaxException;
 import com.opendroid.ws.models.WsModel;
 
@@ -52,6 +58,8 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 
 	/** The context. */
 	protected Context context;
+	
+	private static String REQUEST_FILE_UPLOAD = "key";
 
 	/** The auth. */
 	private boolean auth;
@@ -70,16 +78,25 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 
 	/** The Constant TYPE_POST. */
 	public final static int TYPE_GET = 0, TYPE_POST = 1;
-	
 
 	/** The type. */
 	int type = 0;
 
 	/** The params. */
 	Map<String, String> params;
+	
+	File file;
 
 	/** The access token needed. */
 	private boolean accessTokenNeeded;
+
+	/*
+	 * JsonDeserializer implementation
+	 */
+	JsonDeserializer<T> deserializer;
+	Class deserializeClass;
+
+	private boolean hasImageAttachment;
 
 	/**
 	 * Gets the url of webservices.
@@ -143,7 +160,7 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	 * 
 	 * @return the response array
 	 * @author Gets the response in form of array of mapping class.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
 	public T[] getResponseArray() throws IOException {
@@ -160,7 +177,17 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 		}
 
 		if (source != null) {
-			Gson gson = new Gson();
+			Gson gson = null;
+
+			if (deserializer != null) {
+				GsonBuilder gsonBuilder = new GsonBuilder();
+				gsonBuilder
+						.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+				gsonBuilder.registerTypeAdapter(deserializeClass, deserializer);
+				gson = gsonBuilder.create();
+			} else {
+				gson = new Gson();
+			}
 			Reader reader = new InputStreamReader(source);
 
 			try {
@@ -199,7 +226,17 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 
 		}
 		if (source != null) {
-			Gson gson = new Gson();
+			Gson gson = null;
+
+			if (deserializer != null) {
+				GsonBuilder gsonBuilder = new GsonBuilder();
+				gsonBuilder
+						.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+				gsonBuilder.registerTypeAdapter(deserializeClass, deserializer);
+				gson = gsonBuilder.create();
+			} else {
+				gson = new Gson();
+			}
 			Reader reader = new InputStreamReader(source);
 			response = (T) gson.fromJson(reader, getMapperClass());
 
@@ -238,6 +275,9 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	private InputStream fetchStream(String url) {
 
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+		
+		MultipartEntity multipartEntity = new MultipartEntity(
+				HttpMultipartMode.BROWSER_COMPATIBLE);
 
 		if (params != null) {
 
@@ -256,6 +296,17 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 		}
 
 		DefaultHttpClient client = new DefaultHttpClient();
+		
+		if (hasImageAttachment) {
+
+			Log.d(TAG, "File hasImageAttachment: " + hasImageAttachment);
+
+			Log.d(TAG, "File attached: " + file.getAbsolutePath());
+
+			multipartEntity
+					.addPart(REQUEST_FILE_UPLOAD, new FileBody(file));
+
+		}
 
 		if (isAuth()) {
 			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
@@ -424,5 +475,26 @@ public abstract class WebService<T extends WsModel> implements IWebService {
 	public void setCleanUrl(boolean cleanUrl) {
 		this.cleanUrl = cleanUrl;
 	}
+
+	public void registerTypeAdapter(Class deserializeClass,
+			JsonDeserializer deserializer) {
+		this.deserializer = deserializer;
+		this.deserializeClass = deserializeClass;
+	}
+	
+	/**
+	 * Add file as a multipart request
+	 * 
+	 * @param key
+	 * @param file
+	 */
+	public void setFile(String key, File file) {
+
+		REQUEST_FILE_UPLOAD = key;
+		this.file = file;
+		hasImageAttachment = true;
+
+	}
+
 
 }
