@@ -41,5 +41,4 @@ public interface IWebService<T extends WsModel> {
 	 * @throws IllegalAccessException 
 	 */
 	public String getResponseString() throws IOException, IllegalAccessException;
-	
 }

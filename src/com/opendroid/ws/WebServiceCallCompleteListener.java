@@ -7,3 +7,4 @@ public interface WebServiceCallCompleteListener {
 	public void onError(String message);
 
 }
+

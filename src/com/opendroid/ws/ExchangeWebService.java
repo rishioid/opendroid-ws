@@ -97,6 +97,7 @@ public class ExchangeWebService<T extends WsModel> implements IWebService<T> {
 	 */
 //	protected abstract String getURL();
 
+
 	/**
 	 * @author Rishi K Gets the mapper class.
 	 * 
@@ -201,11 +202,9 @@ public class ExchangeWebService<T extends WsModel> implements IWebService<T> {
 //				se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE,
 //						"application/json"));
 //				get.setEntity(se);
-				
 				if(headers != null){
 					get.setHeaders((Header[])headers.toArray());
 				}
-				
 				HttpResponse response = client.execute(get);
 				if (response != null) {
 					InputStream in = response.getEntity().getContent();

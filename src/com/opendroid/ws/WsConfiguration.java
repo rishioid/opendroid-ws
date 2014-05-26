@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.http.Header;
 
 import com.opendroid.ws.IWebService.Method;
-
 /**
  * Set all your configuration at time of initialization
  */
@@ -36,7 +35,6 @@ public class WsConfiguration {
 	private final Class<?> mapperClass;
 	
 	private final List<Header> headers;
-	
 	private WsConfiguration(final Builder builder)
 	{
 		this.auth = builder.auth;
@@ -96,9 +94,6 @@ public class WsConfiguration {
 		return headers;
 	}
 
-
-
-
 	/**
 	 * Builder pattern for setting all configurations.
 	 */
@@ -128,7 +123,6 @@ public class WsConfiguration {
 		private Class<?> mapperClass;
 		
 		private List<Header> headers;
-		
 		/**
 		 * Checks if is authentication is needed for this webservice.
 		 *
