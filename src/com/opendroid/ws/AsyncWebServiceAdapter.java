@@ -47,7 +47,7 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 		mHandler = new Handler(Looper.getMainLooper());
 		mSendErrorMessageTask = new SendErrorMessageTask();
 	}
-	
+
 	/**
 	 * Gets the response array.
 	 *
@@ -127,14 +127,12 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 			});
 		}
 		this.type = type;
-		
 	}
 
 	/**
 	 * The Class AsyncArrayAdapter.
 	 */
 	class AsyncArrayAdapter extends AsyncTask<Object, Void, T[]> {
-
 
 		/* (non-Javadoc)
 		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
@@ -306,8 +304,6 @@ public class AsyncWebServiceAdapter<T extends WsModel> {
 			wsccl.onError(mErrorMessage, type);
 		}
 	}
-	
-	
 } 
 
 /*
